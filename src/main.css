@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.email {
+  background-color: rgb(245, 245, 232);
+  border-style: solid;
+  border-color: black;
+  border-width: 5px;
+  width: 800px;
+  height: 400px;
+  padding: 2%;
+  margin: 3% 3% 10%;
+}
+
+.dropdowns {
+  margin: 3% 3% 3%;
+}
+
+.dropdowns-and-email {
+  display: flex;
+  flex-direction: row;
+}
