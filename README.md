@@ -16,7 +16,7 @@ To run the InnSync Communications System, follow these steps:
 
 *Note: For a more in-depth understanding of the project, please continue reading below in the ReadMe. You'll find information on design decisions, the programming language used (TypeScript), the process for verifying correctness, considerations for future improvements, and additional details provided courtesy of create-react-app.*
 
-=======
+---
 
 ### Overview of Design decisions:
 The InnSync Communications System is designed to facilitate communication between hotel guests and staff through personalized messages. The system is built as a React web application to provide an intuitive user interface for managing messages.
@@ -54,8 +54,6 @@ To support scalability and data management, introducing a database backend to st
 - Facilitating personalized interactions and enhancing data integrity.
 
 By addressing these aspects and continuing to iterate on the application, I aim to deliver a more polished, reliable, and user-friendly experience for both administrators and end-users alike.
-
-=======
 
 ## Getting Started with Create React App
 
