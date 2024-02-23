@@ -6,8 +6,6 @@ An overview of design decisions, the programming language used (TypeScript), the
 ---
 **The Quick Rundown of How to Run this Program:**
 
-To run the InnSync Communications System, follow these steps:
-
 1. Clone the repository to your local machine.
 2. Navigate to the project directory in your terminal.
 3. Install the necessary dependencies by running `npm install`.
