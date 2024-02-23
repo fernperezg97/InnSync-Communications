@@ -1,4 +1,3 @@
-# InnSync-Communications
 InnSync Communications: Where Hospitality Meets Harmony
 =======
 # Getting Started with Create React App
