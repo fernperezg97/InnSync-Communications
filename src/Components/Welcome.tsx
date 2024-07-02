@@ -21,11 +21,11 @@ export const Welcome: React.FC<WelcomeProps> = ({
 
     return (
         <div>
-            <h1>{timeOfDay}, {guestName}!</h1>
-            <h2>Welcome to {hotelName}!</h2>
-            <h3> Room {roomNumber} is now ready for you. Enjoy your stay, and please don't hesitate to let us know if there is anything we can do to make your time with us more comfortable.</h3>
-            <p>Reservation starts at: {formatTimestamp(reservationStart)}</p>
-            <p>Reservation ends at: {formatTimestamp(reservationEnd)}</p>
+            <h1>{timeOfDay}, {guestName ? guestName  : '{guestName}'}!</h1>
+            <h2>Welcome to {hotelName ? hotelName : '{hotelName}'}!</h2>
+            <h3>Room {roomNumber ? roomNumber : '{roomNumber}'} is now ready for you. Enjoy your stay, and please don't hesitate to let us know if there is anything we can do to make your time with us more comfortable.</h3>
+            <p>Reservation starts at: {reservationStart ? formatTimestamp(reservationStart) : '{startTime}'}</p>
+            <p>Reservation ends at: {reservationEnd ? formatTimestamp(reservationEnd) : '{endTime}'}</p>
         </div>
     );
 };
