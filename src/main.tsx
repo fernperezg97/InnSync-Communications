@@ -7,16 +7,16 @@ import guestsData from './Data/Guests.json';
 import companiesData from './Data/Companies.json';
 import { formatTimestamp } from './Components/useCurrentTime';
 
-interface Guest {
-    id: number;
-    firstName: string;
-    lastName: string;
-    reservation: {
-        roomNumber: number;
-        startTimestamp: number;
-        endTimestamp: number;
-    };
-}
+// interface Guest {
+//     id: number;
+//     firstName: string;
+//     lastName: string;
+//     reservation: {
+//         roomNumber: number;
+//         startTimestamp: number;
+//         endTimestamp: number;
+//     };
+// }
 
 interface Companies {
     id: number;
@@ -108,12 +108,13 @@ export const MessageContainer: React.FC<MessageContainerProps> = () => {
                 return { reminderDate: 'Tomorrow' };
             case MessageType.Welcome:
             case MessageType.Custom: // Handle custom message
+                const companyName = selectedHotel?.company ? selectedHotel.company : "--select a hotel--";
                 return {
-                    greeting,
-                    guestName: guestNameInput,
+                    greeting: greeting + guestNameInput + ",",
                     mainMessage,
                     closingRemarks,
-                    reminderDate: '', // Ensure all keys defined
+                    reminderDate: '', // Ensure all keys defined,
+                    selectedHotel: companyName
                 };
             default:
                 return undefined; // Ensure default return is undefined if no custom data
@@ -159,7 +160,7 @@ export const MessageContainer: React.FC<MessageContainerProps> = () => {
                     </select>
 
                     <h3>* Select guest name:</h3>
-                    <select value={guestNameInput} onChange={handleNameInputChange}>
+                    <select onChange={handleNameInputChange}>
                         <option>--select a guest--</option>
                         {guestsData.map(guest => (
                             <option key={guest.id} value={`${guest.firstName} ${guest.lastName}`}>
@@ -196,7 +197,7 @@ export const MessageContainer: React.FC<MessageContainerProps> = () => {
                         />
                         <input
                             type='text'
-                            placeholder='Closing Remarks or Sign-Off'
+                            placeholder='Closing Remarks'
                             value={closingRemarks}
                             onChange={(e) => handleCustomInputChange('closingRemarks', e.target.value)}
                         />
