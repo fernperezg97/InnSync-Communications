@@ -1,0 +1,26 @@
+{
+    "Welcome": {
+      "template": {
+        "greeting": "{timeOfDayGreeting}, {guestName}!",
+        "welcomeMessage": "Welcome to {hotelName}!",
+        "roomReadyMessage": "Room {roomNumber} is now ready for you. Enjoy your stay, and please don't hesitate to let us know if there is anything we can do to make your time with us more comfortable.",
+        "stayDetails": "Reservation start: {reservationStart}<br/>Reservation end: {reservationEnd}"
+      }
+    },
+    "Fee": {
+      "template": {
+        "title": "Fees Due Notice",
+        "greeting": "{timeOfDayGreeting} {guestName},",
+        "feeNotice": "Thank you for staying at {hotelName}! Please be advised that there are outstanding fees due for your stay.",
+        "detailsNotice": "We have included the details of your stay below for your convenience. Please don't hesitate to contact us if you have any questions or concerns.",
+        "stayDetails": "Reservation start: {reservationStart}<br/>Reservation end: {reservationEnd}<br/>Room number: {roomNumber}"
+      }
+    },
+    "Reminder": {
+      "template": {
+        "greeting": "Reminder for {guestName}:",
+        "reminderMessage": "This is a reminder that your reservation at {hotelName} starts on {reservationStart}. We look forward to seeing you!",
+        "stayDetails": "Reservation start: {reservationStart}<br/>Reservation end: {reservationEnd}<br/>Room number: {roomNumber}"
+      }
+    }
+}  
