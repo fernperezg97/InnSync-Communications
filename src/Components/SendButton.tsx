@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface SendButtonProps {
     isDisabled: boolean;
+    guestName: string;
+    messageType: string | null;
 }
 
-export const SendButton: React.FC<SendButtonProps> = ({ isDisabled }) => {
-  const [clickTime, setClickTime] = useState<Date | null>(null);
+export const SendButton: React.FC<SendButtonProps> = ({ isDisabled, guestName, messageType }) => {
+    const handleClick = () => {
+        if (guestName && messageType) {
+            alert(`Message of type ${messageType} sent to ${guestName}`);
+        }
+    };
 
-  const handleClick = () => {
-    const currentTime = new Date();
-    setClickTime(currentTime);
-  };
-
-  return (
-    <div>
-      <button onClick={handleClick} disabled={isDisabled}>Send Message</button>
-      {clickTime && (
-        <p>Message sent at: {clickTime.toLocaleString()}</p>
-      )}
-    </div>
-  );
+    return (
+        <button onClick={handleClick} disabled={isDisabled}>
+            Send Message
+        </button>
+    );
 };

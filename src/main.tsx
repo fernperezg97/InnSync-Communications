@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { SendButton } from './Components/SendButton';
-import { Welcome } from './Components/Welcome';
-import { Fee } from './Components/Fee';
-import { useCurrentTime } from './Components';
-import { formatTimestamp } from './utils';
-
+import { Message, MessageType } from './Components/Message';
 import logo from './assets/logo.png';
 import './main.css';
-
+import guestsData from './Data/Guests.json';
+import companiesData from './Data/Companies.json';
+import { formatTimestamp } from './Components/useCurrentTime';
 
 interface Guest {
     id: number;
@@ -27,59 +25,126 @@ interface Companies {
     timezone: string;
 }
 
-const guestsData: Guest[] = require('./Data/Guests.json');
-const companiesData: Companies[] = require('./Data/Companies.json');
-
-
-enum MessageType {
-  Welcome = "Welcome",
-  Fee = "Fee",
+interface MessageContainerProps {
+    // Define props as needed
 }
-  
 
-export const Message: React.FC = () => {
-    const [guestNameInput, setGuestNameInput] = useState<string>('');
+export const MessageContainer: React.FC<MessageContainerProps> = () => {
+    const [guestNameInput, setGuestNameInput] = useState<string>('{guestName}');
     const [selectedMessageType, setSelectedMessageType] = useState<MessageType | null>(null);
-    const [selectedHotelName, setSelectedHotelName] = useState<string>('');
+    const [selectedHotel, setSelectedHotel] = useState<Companies | null>(null);
     const [isSendButtonDisabled, setIsSendButtonDisabled] = useState<boolean>(true);
+    const [customMessageFieldsVisible, setCustomMessageFieldsVisible] = useState<boolean>(false); // State to toggle custom message fields visibility
 
-    // handle message type change
+    // State for dynamic input fields
+    const [greeting, setGreeting] = useState<string>('');
+    const [mainMessage, setMainMessage] = useState<string>('');
+    const [closingRemarks, setClosingRemarks] = useState<string>('');
+
     const handleMessageTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedMessageType = e.target.value as MessageType;
-        setSelectedMessageType(selectedMessageType);
-        checkSendButtonStatus(selectedMessageType, guestNameInput, selectedHotelName);
+        const selectedValue = e.target.value;
+        if (selectedValue !== '--select a message option--') {
+            const messageType = selectedValue as MessageType;
+            setSelectedMessageType(messageType);
+            checkSendButtonStatus(messageType, guestNameInput, selectedHotel);
+
+            // Toggle custom message fields visibility
+            setCustomMessageFieldsVisible(messageType === MessageType.Custom);
+        } else {
+            setSelectedMessageType(null);
+            setIsSendButtonDisabled(true);
+            setCustomMessageFieldsVisible(false); // hide custom message fields if another option selected
+        }
     };
 
-    // handle name input change
     const handleNameInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedName = e.target.value;
         setGuestNameInput(selectedName);
-        checkSendButtonStatus(selectedMessageType, selectedName, selectedHotelName);
+
+        if (selectedName !== '--select a guest--') {
+            checkSendButtonStatus(selectedMessageType, selectedName, selectedHotel);
+        } else {
+            setIsSendButtonDisabled(true);
+        }
     };
 
-    // handle hotel selection change
     const handleHotelSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedHotel = e.target.value;
-        setSelectedHotelName(selectedHotel);
-        checkSendButtonStatus(selectedMessageType, guestNameInput, selectedHotel);
+        const selectedHotelId = parseInt(e.target.value, 10);
+        const hotel = companiesData.find(company => company.id === selectedHotelId);
+        
+        if (hotel) {
+            setSelectedHotel(hotel);
+            checkSendButtonStatus(selectedMessageType, guestNameInput, hotel);
+        } else {
+            setSelectedHotel(null);
+            checkSendButtonStatus(selectedMessageType, guestNameInput, null);
+        }
     };
 
-    const checkSendButtonStatus = (messageType: MessageType | null, guestName: string, hotelName: string) => {
-        setIsSendButtonDisabled(!messageType || !guestName || !hotelName);
+    const handleCustomInputChange = (field: string, value: string) => {
+        switch (field) {
+            case 'greeting':
+                setGreeting(value);
+                break;
+            case 'mainMessage':
+                setMainMessage(value);
+                break;
+            case 'closingRemarks':
+                setClosingRemarks(value);
+                break;
+            default:
+                break;
+        }
     };
 
-    // Find the data corresponding to the selected guest name directly from guestsData
-    const selectedGuest = guestsData.find((guest: any) => `${guest.firstName} ${guest.lastName}` === guestNameInput);
-    const roomNumber = selectedGuest ? selectedGuest.reservation.roomNumber : '';
-    const reservationStart = selectedGuest ? selectedGuest.reservation.startTimestamp : 0;
-    const reservationEnd = selectedGuest ? selectedGuest.reservation.endTimestamp : 0;
+    const checkSendButtonStatus = (messageType: MessageType | null, guestName: string, hotel: Companies | null) => {
+        setIsSendButtonDisabled(!messageType || guestName === '--select a guest--' || !hotel);
+    };
 
+    // Prepare custom data based on selected message type and input fields
+    const prepareCustomData = () => {
+        switch (selectedMessageType) {
+            case MessageType.Reminder:
+                return { reminderDate: 'Tomorrow' };
+            case MessageType.Welcome:
+            case MessageType.Custom: // Handle custom message
+                return {
+                    greeting,
+                    guestName: guestNameInput,
+                    mainMessage,
+                    closingRemarks,
+                    reminderDate: '', // Ensure all keys defined
+                };
+            default:
+                return undefined; // Ensure default return is undefined if no custom data
+        }
+    };
+
+    const selectedGuest = guestsData.find(guest => `${guest.firstName} ${guest.lastName}` === guestNameInput);
+    const roomNumber = selectedGuest ? selectedGuest.reservation.roomNumber : '{roomNumber}';
+    const reservationStart = selectedGuest
+        ? formatTimestamp(parseInt(selectedGuest.reservation.startTimestamp.toString()))
+        : '{reservationStart}';
+
+    const reservationEnd = selectedGuest
+        ? formatTimestamp(parseInt(selectedGuest.reservation.endTimestamp.toString()))
+        : '{reservationEnd}';
+
+    const messageProps = {
+        messageType: selectedMessageType || MessageType.Welcome,
+        guestName: guestNameInput,
+        hotelName: selectedHotel ? selectedHotel.company : '',
+        roomNumber: roomNumber,
+        reservationStart: reservationStart,
+        reservationEnd: reservationEnd,
+        timezone: selectedHotel ? selectedHotel.timezone : '',
+        customData: prepareCustomData() as { [key: string]: string },
+    };
+    
     return (
         <div className='container'>
             <img src={logo} alt="Logo" />
-            <h1>
-                InnSync Messaging Center
-            </h1>
+            <h1>InnSync Messaging Center</h1>
             
             <div className='dropdowns-and-email'>
                 <div className='dropdowns'>
@@ -88,53 +153,68 @@ export const Message: React.FC = () => {
                         <option>--select a message option--</option>
                         <option value={MessageType.Welcome}>Welcome Message</option>
                         <option value={MessageType.Fee}>Fee Message</option>
+                        <option value={MessageType.Reminder}>Reminder Message</option>
+                        <option value={MessageType.Custom}>Custom Message</option> {/* custom message option */}
+                        {/* can add other options as needed */}
                     </select>
 
                     <h3>* Select guest name:</h3>
-                    <select onChange={handleNameInputChange}>
+                    <select value={guestNameInput} onChange={handleNameInputChange}>
                         <option>--select a guest--</option>
-                        {guestsData.map((guest: any, index: number) => (
-                        <option key={index} value={`${guest.firstName} ${guest.lastName}`}>
-                            {`${guest.firstName} ${guest.lastName}`}
-                        </option>
+                        {guestsData.map(guest => (
+                            <option key={guest.id} value={`${guest.firstName} ${guest.lastName}`}>
+                                {`${guest.firstName} ${guest.lastName}`}
+                            </option>
                         ))}
                     </select>
 
                     <h3>* Select hotel:</h3>
                     <select onChange={handleHotelSelectionChange}>
                         <option>--select a hotel--</option>
-                        {companiesData.map((company: any, index: number) => (
-                            <option key={index} value={company.company}>
+                        {companiesData.map(company => (
+                            <option key={company.id} value={company.id}>
                                 {company.company}
                             </option>
                         ))}
                     </select>
                 </div>
 
-                {/* Render the appropriate message based on selectedMessageType */}
-                <div className='email'>
-                    {selectedMessageType === MessageType.Welcome && (
-                        <Welcome 
-                            guestName={guestNameInput} 
-                            hotelName={selectedHotelName} 
-                            roomNumber={Number(roomNumber)} 
-                            reservationStart={reservationStart} 
-                            reservationEnd={reservationEnd}
+                {/* Input fields for dynamic message content */}
+                {customMessageFieldsVisible && (
+                    <div className='dynamic-fields'>
+                        <input
+                            type='text'
+                            placeholder='Greeting'
+                            value={greeting}
+                            onChange={(e) => handleCustomInputChange('greeting', e.target.value)}
                         />
-                    )}
+                        <input
+                            type='text'
+                            placeholder='Main Message'
+                            value={mainMessage}
+                            onChange={(e) => handleCustomInputChange('mainMessage', e.target.value)}
+                        />
+                        <input
+                            type='text'
+                            placeholder='Closing Remarks or Sign-Off'
+                            value={closingRemarks}
+                            onChange={(e) => handleCustomInputChange('closingRemarks', e.target.value)}
+                        />
+                    </div>
+                )}
 
-                    {selectedMessageType === MessageType.Fee && (
-                        <Fee 
-                            guestName={guestNameInput} 
-                            hotelName={selectedHotelName} 
-                            reservationStart={reservationStart} 
-                            reservationEnd={reservationEnd}
-                        />
+                <div className='email'>
+                    {selectedMessageType && (
+                        <Message {...messageProps} />
                     )}
                 </div>
             </div>
 
-            <SendButton isDisabled={isSendButtonDisabled} />
+            <SendButton 
+                isDisabled={isSendButtonDisabled} 
+                guestName={guestNameInput} 
+                messageType={selectedMessageType} 
+            />
         </div>
     );
 };

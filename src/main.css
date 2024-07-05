@@ -14,6 +14,7 @@
   height: 400px;
   padding: 2%;
   margin: 3% 3% 10%;
+  overflow: auto; /* Add overflow for scrolling content */
 }
 
 .dropdowns {
@@ -23,4 +24,15 @@
 .dropdowns-and-email {
   display: flex;
   flex-direction: row;
+}
+
+.dynamic-fields {
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px; /* Adjust margin as needed */
+
+}
+
+.show-dynamic-fields .dynamic-fields {
+  display: block; /* Show dynamic fields when this class is applied */
 }
