@@ -25,11 +25,11 @@ interface Companies {
     timezone: string;
 }
 
-interface MessageContainerProps {
-    // Define props as needed
-}
+// interface MessageContainerProps {
+//     // Define props as needed
+// }
 
-export const MessageContainer: React.FC<MessageContainerProps> = () => {
+export const MessageContainer: React.FC<{}> = () => {
     const [guestNameInput, setGuestNameInput] = useState<string>('{guestName}');
     const [selectedMessageType, setSelectedMessageType] = useState<MessageType | null>(null);
     const [selectedHotel, setSelectedHotel] = useState<Companies | null>(null);
